@@ -1,12 +1,16 @@
-//factory prototype that takes in the contents of a div (an array of strings) and 
-//creates divs with those strings.  It's style options will have to create an instance
-//of a sepparate class and will be called from the factory, unknown to the user  
+// factory prototype that takes in the contents of a div (an array of strings/numbers) and 
+// creates divs with those strings.  Style options will be implemented through use of an instance
+// of a sepparate class and will be called from the factory, unknown to the user.  The factory 
+// also calls another function to set the text size  
 
 //factory and facade
 
-function divCreator (divContents){
+// main class / factory
 
+function divCreator (divContents, savedDivs){
 
+	document.body.style.backgroundColor = 'orange';
+	
 	var size = 0;
 
 	if( Object.prototype.toString.call( divContents ) === '[object Array]' ) {
@@ -25,9 +29,13 @@ function divCreator (divContents){
 	for(var i=0; i < size; i++){
 		var div = document.createElement("div");
 		div.innerHTML = divContents[i][0];
+		if (i%2 == 0){
+			div.style.backgroundColor = 'gray';
+		}
 		styles.setDefault(div);
 		contentMod(div,divContents[i][1]);
 		document.body.appendChild(div);
+		savedDivs[i] = div;
 	}
 
 	this.colorSet = function( div, color ){
@@ -43,6 +51,7 @@ function divCreator (divContents){
 
 };
 
+// function abstracted in main class
 
 function divStyles(){
 
@@ -71,6 +80,8 @@ function divStyles(){
 
 };
 
+// function abstracted in main class
+
 function contentMod( div, size ){
 	
 	var temp = div.innerHTML;
@@ -79,5 +90,14 @@ function contentMod( div, size ){
 
 }
 
+// usage of factory/facade.  The divCreator factory takes in an array of
+// contents to put in the divs/sizes for the content and a blank array to 
+// hold references to the created divs.  The call to colorSet() shows
+// addition facade being used because the user doesn't actually know that 
+// another class/prototype is being used to alter the div (it's not actually-
+// coming from the divCreator class.)
+
+var savedDivs = new Array();
 var divContents = [['Oh','1'], ['My','2'], ['God','3'] , ['Becky','4']];
-var myDivs = new divCreator(divContents);
+var myDivs = new divCreator(divContents, savedDivs);
+myDivs.colorSet(savedDivs[0],'blue');
